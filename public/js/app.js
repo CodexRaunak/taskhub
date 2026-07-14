@@ -28,10 +28,36 @@ const taskStatus = $('#taskStatus');
 const taskPriority = $('#taskPriority');
 const taskList = $('#taskList');
 const filterStatus = $('#filterStatus');
+const logoutBtn = $('#logoutBtn');
 const toast = $('#toast');
 
 let isRegister = false;
 let toastTimer = null;
+
+/* ── Event listeners ── */
+
+authToggle.addEventListener('click', toggleAuth);
+logoutBtn.addEventListener('click', logout);
+filterStatus.addEventListener('change', loadTasks);
+
+/* Event delegation for task cards */
+taskList.addEventListener('change', (e) => {
+  const checkbox = e.target.closest('.task-card input[type="checkbox"]');
+  if (checkbox) {
+    const card = checkbox.closest('.task-card');
+    toggleDone(card.dataset.id, checkbox.checked);
+  }
+});
+
+taskList.addEventListener('click', (e) => {
+  const card = e.target.closest('.task-card');
+  if (!card) return;
+  if (e.target.closest('.btn-icon.danger')) {
+    deleteTask(card.dataset.id);
+  } else if (e.target.closest('.btn-icon:not(.danger)')) {
+    editTask(card.dataset.id);
+  }
+});
 
 /* ── API helpers ── */
 
@@ -55,10 +81,6 @@ async function api(path, options = {}) {
   }
 
   return body;
-}
-
-function uploadUrl(path) {
-  return path;
 }
 
 /* ── Toast ── */
@@ -122,7 +144,7 @@ authForm.addEventListener('submit', async (e) => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
 
-    showAuth();
+    showDashboard();
   } catch (err) {
     authError.textContent = err.message;
     authError.classList.remove('hidden');
@@ -186,7 +208,7 @@ function renderTasks(tasks) {
       (t) => `
     <div class="task-card" data-id="${t.id}">
       <div class="task-check">
-        <input type="checkbox" ${t.status === 'done' ? 'checked' : ''} onchange="toggleDone('${t.id}', this.checked)">
+        <input type="checkbox" ${t.status === 'done' ? 'checked' : ''}>
       </div>
       <div class="task-body">
         <div class="task-title">${esc(t.title)}</div>
@@ -198,8 +220,8 @@ function renderTasks(tasks) {
         </div>
       </div>
       <div class="task-actions">
-        <button class="btn-icon" onclick="editTask('${t.id}')" title="Edit">✏️</button>
-        <button class="btn-icon danger" onclick="deleteTask('${t.id}')" title="Delete">🗑️</button>
+        <button class="btn-icon" title="Edit">✏️</button>
+        <button class="btn-icon danger" title="Delete">🗑️</button>
       </div>
     </div>
   `

@@ -11,7 +11,7 @@
     <div class="nav-brand">TaskHub</div>
     <div class="nav-info">
       <span id="userDisplay"></span>
-      <button class="btn-outline btn-sm" onclick="logout()">Logout</button>
+      <button class="btn-outline btn-sm" id="logoutBtn">Logout</button>
     </div>
   </nav>
 
@@ -33,7 +33,7 @@
         </form>
         <p class="auth-toggle">
           <span id="authToggleText">Don't have an account?</span>
-          <a href="#" id="authToggle" onclick="toggleAuth(event)">Create one</a>
+          <a href="#" id="authToggle">Create one</a>
         </p>
       </div>
     </section>
@@ -65,7 +65,7 @@
           <div class="task-list-header">
             <h3>Tasks</h3>
             <div class="filter-group">
-              <select id="filterStatus" class="input input-sm" onchange="loadTasks()">
+              <select id="filterStatus" class="input input-sm">
                 <option value="all">All</option>
                 <option value="todo">To Do</option>
                 <option value="in_progress">In Progress</option>
