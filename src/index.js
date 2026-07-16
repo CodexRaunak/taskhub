@@ -8,6 +8,12 @@ import { migrate } from './db/migrate.js';
 async function main() {
   logger.info({ app: config.appName, env: config.nodeEnv }, 'Starting');
 
+  const startupDelay = parseInt(process.env.STARTUP_DELAY, 10) || 0;
+  if (startupDelay > 0) {
+    logger.info({ delay: startupDelay }, 'Delaying startup for readiness probe demo');
+    await new Promise(resolve => setTimeout(resolve, startupDelay * 1000));
+  }
+
   await migrate();
 
   if (redis) {

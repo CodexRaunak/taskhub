@@ -7,6 +7,9 @@ const router = Router();
 const startTime = Date.now();
 
 router.get('/', async (req, res) => {
+  if (globalThis.__healthFail) {
+    return res.status(503).json({ status: 'error', message: 'Health endpoint manually failed for demo' });
+  }
   const checks = {
     status: 'ok',
     uptime: Math.floor((Date.now() - startTime) / 1000),
