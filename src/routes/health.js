@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
   }
   const checks = {
     status: 'ok',
+    version: '2.0.0',
     uptime: Math.floor((Date.now() - startTime) / 1000),
     timestamp: new Date().toISOString(),
     database: { status: 'unknown' },

@@ -12,10 +12,21 @@ spec:
       labels:
         app: task-api
     spec:
+      serviceAccountName: taskhub-api
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: api
           image: taskhub-api:latest
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+            readOnlyRootFilesystem: true
           ports:
             - containerPort: 3000
               name: http
@@ -48,9 +59,13 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 2
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
             - name: uploads
               mountPath: /app/uploads
       volumes:
+        - name: tmp
+          emptyDir: {}
         - name: uploads
           persistentVolumeClaim:
             claimName: api-uploads
